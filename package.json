@@ -1,6 +1,6 @@
 {
   "name": "ai-pr-review-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "🤖 AI-powered Pull Request reviewer - Get instant feedback on your code changes using GPT",
   "main": "src/reviewer.js",
   "bin": {
@@ -37,12 +37,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/ai-pr-review-cli.git"
+    "url": "https://github.com/blockDeepanshu/ai-pr-review.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/ai-pr-review-cli/issues"
+    "url": "https://github.com/blockDeepanshu/ai-pr-review/issues"
   },
-  "homepage": "https://github.com/yourusername/ai-pr-review-cli#readme",
+  "homepage": "https://github.com/blockDeepanshu/ai-pr-review#readme",
   "files": [
     "bin/",
     "src/",
