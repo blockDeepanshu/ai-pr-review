@@ -1,5 +1,5 @@
 const axios = require("axios");
-
+require("dotenv").config();
 async function openai(prompt, model) {
   const res = await axios.post(
     "https://api.openai.com/v1/chat/completions",
