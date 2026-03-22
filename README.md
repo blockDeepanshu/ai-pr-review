@@ -1,212 +1,323 @@
 # 🤖 AI PR Review CLI
 
-An intelligent command-line tool that uses AI to review your code changes and provide instant feedback on pull requests, issues, typos, and improvements.
+An intelligent command-line tool that uses AI to review your code changes and provide instant feedback on issues, typos, and improvements. Perfect for any programming language and project type.
 
-## ✨ Features
+## ✨ Key Features
 
-- 🔍 **Intelligent Code Analysis** - Uses GPT to analyze your code changes
-- 🎯 **Smart Branch Detection** - Automatically detects common base branches
-- 🎨 **Beautiful CLI Interface** - Clean, colorful output with emojis
-- ⚡ **Fast & Easy** - One command to get comprehensive feedback
-- 🔧 **Flexible Configuration** - Multiple ways to configure base branch and AI model
-- 📊 **Categorized Feedback** - Issues, typos, and improvements clearly separated
+- 🔍 **Smart Code Analysis** - Uses GPT to find bugs, security issues, and improvements
+- 🎯 **Auto Branch Detection** - Automatically detects your base branch (main/master/develop)
+- 🔄 **Batch Processing** - Handles large repositories without hitting API rate limits
+- 🎨 **Beautiful Output** - Clean, colorful results with clear categorization
+- 🌍 **Universal Support** - Works with any language, framework, or project type
+- ⚙️ **Flexible Config** - Multiple ways to customize behavior
 
 ## 🚀 Quick Start
 
-### Installation
-
+### 1. Install
 ```bash
-# Install globally for use anywhere
+# Install globally
 npm install -g ai-pr-review-cli
 
-# Or use with npx (no installation needed)
+# Or use without installing
 npx ai-pr-review-cli review
 ```
 
-### Setup
+### 2. Get OpenAI API Key
+Get your API key from [OpenAI](https://platform.openai.com/api-keys)
 
-1. **Get an OpenAI API key** from [OpenAI](https://platform.openai.com/api-keys)
+### 3. Set API Key
 
-2. **Set your API key**:
-```bash
-# Option 1: Environment variable (recommended)
-export OPENAI_API_KEY="your-api-key-here"
+**Windows:**
+```powershell
+# PowerShell - current session
+$env:OPENAI_API_KEY="your-api-key-here"
 
-# Option 2: Create .env file in your project
-echo "OPENAI_API_KEY=your-api-key-here" > .env
+# Permanent (via System Properties > Environment Variables)
+# Variable name: OPENAI_API_KEY
+# Variable value: your-api-key-here
 ```
 
-3. **Run a review**:
+**Mac/Linux:**
 ```bash
-# In your git repository
+# Current session
+export OPENAI_API_KEY="your-api-key-here"
+
+# Permanent (add to ~/.bashrc or ~/.zshrc)
+echo 'export OPENAI_API_KEY="your-api-key-here"' >> ~/.bashrc
+```
+
+### 4. Use in Any Git Repository
+```bash
+# Navigate to your project
+cd my-project
+
+# Review your changes
 ai-pr-review review
 
-# Or use the short alias
+# Short alias also works
 aipr review
 ```
 
-## 📖 Usage
+## 💻 Usage Examples
 
-### Basic Usage
-
+### Small Projects
 ```bash
-# Review current branch against main
+# Simple review - auto-detects base branch
 ai-pr-review review
 
 # Review against specific branch
-ai-pr-review review --base origin/develop
-
-# Use different AI model
-ai-pr-review review --model gpt-4o
-
-# Show detailed output
-ai-pr-review review --verbose
-```
-
-### Command Options
-
-| Option | Short | Description | Example |
-|--------|-------|-------------|---------|
-| `--base <branch>` | `-b` | Base branch to compare against | `-b origin/main` |
-| `--model <model>` | `-m` | AI model to use | `-m gpt-4o` |
-| `--provider <provider>` | | AI provider (currently only openai) | `--provider openai` |
-| `--verbose` | `-v` | Show detailed output | `-v` |
-
-### Examples
-
-```bash
-# Review feature branch against main
-git checkout feature/new-feature
 ai-pr-review review --base main
 
-# Review with GPT-4 and verbose output  
-ai-pr-review review --model gpt-4o --verbose
+# Use GPT-4 for higher quality
+ai-pr-review review --model gpt-4o
+```
 
-# Review staged changes only
-git add .
+### Large Projects (Batch Review)
+```bash
+# Automatically batches files to avoid rate limits
+ai-pr-review batch
+
+# Frontend-optimized batching
+ai-pr-review batch --frontend
+
+# Custom batch size
+ai-pr-review batch --batch-size 6
+
+# See what would be reviewed (no API calls)
+ai-pr-review batch --dry-run
+```
+
+## 📋 Common Workflows
+
+### Feature Development
+```bash
+# Create feature branch
+git checkout -b feature/new-feature
+
+# Make changes, then review before committing
 ai-pr-review review
 
-# Review uncommitted changes
-ai-pr-review review  # Automatically includes working directory changes
+# Address feedback, then commit
+git add .
+git commit -m "Implement new feature"
 ```
 
-## ⚙️ Configuration
-
-### Method 1: Command Line Arguments (Recommended)
+### Large Codebase Updates
 ```bash
-ai-pr-review review --base origin/main --model gpt-4o-mini
+# Stage all changes
+git add .
+
+# Batch review to avoid rate limits
+ai-pr-review batch
+
+# Review shows issues by category:
+# 🚨 Issues: bugs, security, performance
+# ✏️ Typos: spelling, grammar
+# 💡 Improvements: best practices, refactoring
 ```
 
-### Method 2: Project Configuration File
-Create `.aiprconfig.json` in your project root:
+### Different Project Types
+```bash
+# Works automatically for any project:
+cd react-frontend && ai-pr-review batch --frontend
+cd node-api && ai-pr-review batch  
+cd python-ml && ai-pr-review batch
+cd java-enterprise && ai-pr-review batch
+cd devops-terraform && ai-pr-review batch
+```
 
+## ⚙️ Configuration Options
+
+### Global Config (One-time Setup)
+```bash
+# Set default preferences
+ai-pr-review config --model gpt-4o-mini --base main
+
+# Creates ~/.aiprconfig.json with your defaults
+```
+
+### Project Config (.aiprconfig.json)
 ```json
 {
   "provider": "openai",
-  "model": "gpt-4o-mini", 
-  "baseBranch": "origin/main"
+  "model": "gpt-4o-mini",
+  "baseBranch": "develop"
 }
 ```
 
-### Method 3: Auto-Detection
-The tool automatically detects common base branches in this order:
-1. `origin/main`
-2. `origin/master`
-3. `origin/develop`
-4. `main`
-5. `master` 
-6. `develop`
-7. `HEAD~1` (fallback)
+### Command Line Options
+| Option | Description | Example |
+|--------|-------------|---------|
+| `--base <branch>` | Compare against specific branch | `--base origin/develop` |
+| `--model <model>` | Use specific AI model | `--model gpt-4o` |
+| `--verbose` | Show detailed analysis info | `--verbose` |
+| `--batch-size <n>` | Files per batch (default: 8) | `--batch-size 4` |
+| `--frontend` | Optimize for frontend projects | `--frontend` |
+| `--dry-run` | Preview without API calls | `--dry-run` |
 
-## 🎯 What Gets Reviewed
+## 🎯 What Gets Analyzed
 
-The tool analyzes:
-- ✅ **Committed changes** between branches
-- ✅ **Staged changes** (files added with `git add`)
-- ✅ **Working directory changes** (uncommitted modifications)
-- ✅ **File contents** for context
+### Code Changes
+- ✅ **Committed changes** (between branches)
+- ✅ **Staged changes** (`git add`)
+- ✅ **Working directory changes** (uncommitted)
 
-## 📊 Output Categories
+### File Types Supported
+- **Web**: JavaScript, TypeScript, HTML, CSS, SCSS
+- **Backend**: Python, Java, Go, Ruby, PHP, C#
+- **Mobile**: React Native, Flutter, Swift, Kotlin
+- **DevOps**: Terraform, Docker, Kubernetes, YAML
+- **Data**: SQL, R, Jupyter notebooks
+- **Config**: JSON, YAML, TOML, XML
+- **Documentation**: Markdown, reStructuredText
 
-### 🚨 Issues
-- Critical bugs and logic errors
-- Security vulnerabilities  
-- Performance problems
-- Breaking changes
+## 🔧 Troubleshooting
 
-### ✏️ Typos
-- Spelling mistakes in comments
-- Grammar errors in strings
-- Documentation typos
-
-### 💡 Improvements  
-- Code quality suggestions
-- Best practice recommendations
-- Performance optimizations
-- Refactoring opportunities
-
-## 🔧 Supported AI Models
-
-| Model | Speed | Quality | Cost |
-|-------|-------|---------|------|
-| `gpt-4o-mini` | ⚡⚡⚡ | ⭐⭐⭐ | 💰 |
-| `gpt-4o` | ⚡⚡ | ⭐⭐⭐⭐⭐ | 💰💰💰 |
-| `gpt-3.5-turbo` | ⚡⚡⚡ | ⭐⭐ | 💰 |
-
-## 🛠️ Troubleshooting
-
-### "No changes found to review"
-- Make sure you're on a feature branch (not main/master)
-- Check if you have uncommitted changes: `git status`
-- Try specifying a different base branch: `--base main`
-- Update remote branches: `git fetch origin`
-
-### "API key not found"
+### Rate Limit Errors (429)
 ```bash
-# Set your OpenAI API key
-export OPENAI_API_KEY="your-key-here"
+# Use batch mode for large changes
+ai-pr-review batch
 
-# Or create .env file
-echo "OPENAI_API_KEY=your-key-here" > .env
+# Or wait 1-2 minutes and retry
+ai-pr-review review
+
+# Consider upgrading OpenAI plan for higher limits
 ```
 
-### "Branch not found"
+### No Changes Found
 ```bash
-# List all available branches
-git branch -a
+# Check git status
+git status
 
-# Use a branch that exists
+# Make sure you're not on the main branch
+git checkout -b feature/my-changes
+
+# Or specify different base branch
 ai-pr-review review --base origin/master
+```
+
+### API Key Issues
+```bash
+# Verify key is set
+echo $OPENAI_API_KEY  # Mac/Linux
+echo $env:OPENAI_API_KEY  # Windows PowerShell
+
+# Test with simple review
+ai-pr-review review --verbose
+```
+
+## 💡 Pro Tips
+
+### Efficient Workflows
+```bash
+# Review before committing
+git add changed-files/
+ai-pr-review review
+# Fix issues, then commit
+
+# Review large changes in batches
+ai-pr-review batch --dry-run  # Preview
+ai-pr-review batch            # Execute
+```
+
+### Cost Optimization
+```bash
+# Use mini model for regular reviews (cheaper)
+ai-pr-review review --model gpt-4o-mini
+
+# Use GPT-4 for critical reviews (more thorough)
+ai-pr-review review --model gpt-4o
+
+# Set as default
+ai-pr-review config --model gpt-4o-mini
+```
+
+### Shell Aliases
+```bash
+# Add to ~/.bashrc or ~/.zshrc
+alias review="ai-pr-review review"
+alias batch-review="ai-pr-review batch"
+alias quick-review="ai-pr-review review --model gpt-4o-mini"
+
+# Usage
+review --base develop
+batch-review --frontend
+quick-review
+```
+
+## 🌍 Platform Support
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| **GitHub** | ✅ | Full support |
+| **GitLab** | ✅ | Full support |  
+| **Bitbucket** | ✅ | Full support |
+| **Azure DevOps** | ✅ | Full support |
+| **Local Git** | ✅ | Works without remote |
+
+## 📊 Sample Output
+
+```bash
+ai-pr-review batch
+
+🤖 AI PR Review
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 Analyzing changes on branch: feature/auth-system
+📁 Found 12 changed files: auth.js, login.js, middleware.js, ...
+
+🔄 Creating 4 review batches...
+
+--- Batch 1/4: api ---
+Files: auth.js, middleware.js, routes.js
+✔ Review completed!
+
+🚨 Issues
+  1. Missing input validation in auth.js:15
+  2. Potential SQL injection in routes.js:42
+  3. Password stored in plain text - use bcrypt
+
+✏️ Typos  
+  1. "recieve" should be "receive" in comment (auth.js:8)
+
+💡 Improvements
+  1. Add rate limiting to login endpoint
+  2. Use environment variables for JWT secret
+  3. Add error logging for failed auth attempts
+
+--- Batch 2/4: frontend ---
+[... continues for other batches ...]
+
+📋 Review Summary: 5 issues, 2 typos, 8 improvements
 ```
 
 ## 🔐 Security & Privacy
 
-- Your code is sent to OpenAI's API for analysis
-- API keys are read from environment variables or .env files
-- No code is stored permanently by the tool
-- Consider using this on non-sensitive codebases
+- Code is sent to OpenAI's API for analysis
+- No permanent storage of your code
+- Use `.gitignore` to exclude sensitive files
 - Review OpenAI's [data usage policies](https://openai.com/policies/api-data-usage-policies)
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+- Consider using on non-production codebases first
 
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## 💡 Tips
+## 🤝 Contributing
 
-- **Use on feature branches** for best results
-- **Commit changes first** for more accurate reviews  
-- **Use `--verbose`** to see what's being analyzed
-- **Try different models** for varying levels of detail
-- **Set up aliases** in your shell for quick access:
-  ```bash
-  alias review="ai-pr-review review"
-  alias aipr="ai-pr-review review"
-  ```
+Contributions welcome! Feel free to:
+- Report bugs or request features
+- Submit pull requests
+- Improve documentation
+- Share usage examples
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/blockDeepanshu/ai-pr-review/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/blockDeepanshu/ai-pr-review/discussions)
 
 ---
 
-Made with ❤️ for developers who want better code reviews!
+**Made with ❤️ for developers who want smarter code reviews**
+
+*Save time, catch bugs, and improve code quality with AI-powered reviews* 🚀

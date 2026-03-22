@@ -63,6 +63,13 @@ async function getDiff(baseBranch) {
     // Combine all diffs
     const totalDiff = [committedDiff, workingDiff, stagedDiff].filter(d => d.length > 0).join('\n\n--- NEXT DIFF SECTION ---\n\n');
     
+    // Limit diff size to prevent rate limit issues
+    const maxDiffLength = 10000;
+    if (totalDiff.length > maxDiffLength) {
+      console.warn(`⚠️  Large diff detected (${totalDiff.length} chars). Truncating to ${maxDiffLength} chars to avoid rate limits.`);
+      return totalDiff.slice(0, maxDiffLength) + '\n\n[... diff truncated to avoid rate limits ...]';
+    }
+    
     return totalDiff;
   } catch (error) {
     // Silently try alternative approaches
@@ -136,13 +143,48 @@ async function getChangedFiles(baseBranch) {
   }
 }
 
-function readFiles(files) {
+function readFiles(files, batchSize = 5) {
+  // Don't limit files here - let the caller handle batching
+  // This function should read ALL requested files
+  
   return files
     .filter((f) => fs.existsSync(f))
-    .map((file) => ({
-      name: file,
-      content: fs.readFileSync(file, "utf-8").slice(0, 5000),
-    }));
+    .filter((f) => {
+      // Skip large generated files common in frontend projects
+      const skipPatterns = [
+        /node_modules/,
+        /\.git/,
+        /dist\//,
+        /build\//,
+        /public\/.*\.(js|css)$/,  // Built assets
+        /\.min\.(js|css)$/,       // Minified files
+        /bundle.*\.js$/,          // Webpack bundles
+        /chunk.*\.js$/,           // Code-split chunks
+        /vendor.*\.js$/,          // Vendor bundles
+        /\.map$/,                 // Source maps
+        /coverage\//,             // Test coverage
+        /\.lock$/,                // Lock files
+        /\.log$/                  // Log files
+      ];
+      
+      return !skipPatterns.some(pattern => pattern.test(f));
+    })
+    .map((file) => {
+      let content = fs.readFileSync(file, "utf-8");
+      
+      // Special handling for package-lock.json (huge files)
+      if (file.includes('package-lock.json')) {
+        const lines = content.split('\n');
+        if (lines.length > 50) {
+          content = lines.slice(0, 30).join('\n') + '\n... [truncated large package-lock.json]';
+        }
+      }
+      
+      return {
+        name: file,
+        content: content.slice(0, 3000),
+      };
+    });
 }
 
 module.exports = { getDiff, getChangedFiles, readFiles, getCurrentBranch, checkBranchExists, detectBaseBranch, getAllBranches };
