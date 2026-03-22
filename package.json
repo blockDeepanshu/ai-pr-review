@@ -1,6 +1,6 @@
 {
   "name": "ai-pr-review-cli",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "🤖 AI-powered Pull Request reviewer - Get instant feedback on your code changes using GPT",
   "main": "src/reviewer.js",
   "bin": {

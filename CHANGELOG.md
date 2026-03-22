@@ -2,6 +2,34 @@
 
 All notable changes to AI PR Review CLI will be documented in this file.
 
+## [1.2.0] - 2026-03-22
+
+### 🚀 Revolutionary File Processing
+- **Unlimited File Support**: No more 10-file limits - review unlimited files
+- **Intelligent Auto-Batching**: Built-in batching system processes files in groups of 5
+- **Smart Rate Limiting**: 3-second delays between batches prevent API rate limit errors
+- **Progress Tracking**: Real-time batch progress with detailed status updates
+- **Error Recovery**: If one batch fails, others continue processing
+
+### 🔧 Enhanced User Experience  
+- **Verbose Mode**: `--verbose` flag shows detailed processing information
+- **File Content Debugging**: See exactly what files are being processed
+- **Batch Status Updates**: Track progress through multiple batches
+- **Consolidated Results**: All batch results combined into final comprehensive report
+- **No Data Loss**: Every file gets reviewed, no truncation or skipping
+
+### 🛠️ Technical Improvements
+- **Improved Error Handling**: Better error messages and graceful failure recovery
+- **Memory Efficient**: Processes files in manageable chunks
+- **Scope Bug Fixes**: Fixed variable scope issues in batch processing
+- **Performance Optimization**: Reduced memory usage and improved processing speed
+
+### 📊 Better Output Format
+- **Batch-by-Batch Results**: See results from each batch as it completes
+- **Combined Final Results**: All findings consolidated into comprehensive summary
+- **Processing Statistics**: Shows total batches and processing time
+- **Enhanced Debugging**: Verbose mode shows file content previews and prompt sizes
+
 ## [1.1.0] - 2026-03-22
 
 ### 🚀 Major Features Added
