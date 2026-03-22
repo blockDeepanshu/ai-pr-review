@@ -1,6 +1,6 @@
 {
   "name": "ai-pr-review-cli",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "🤖 AI-powered Pull Request reviewer - Get instant feedback on your code changes using GPT",
   "main": "src/reviewer.js",
   "bin": {
@@ -13,6 +13,7 @@
   },
   "scripts": {
     "start": "node bin/cli.js",
+    "batch-review": "node batch-review.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "echo 'Ready to publish!'"
   },
@@ -46,7 +47,9 @@
   "files": [
     "bin/",
     "src/",
+    "batch-review.js",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "preferGlobal": true,

@@ -56,6 +56,44 @@ program
     }
   });
 
+program
+  .command("batch")
+  .description("🔄 Review large repositories in batches to avoid rate limits")
+  .option("--dry-run", "Show what would be reviewed without actually running AI review")
+  .option("--frontend", "Optimize batching for frontend projects (React, Vue, Angular)")
+  .option("--batch-size <number>", "Number of files per batch (default: 8)", "8")
+  .action(async (options) => {
+    const { default: chalk } = await import("chalk");
+    console.log(chalk.blue.bold("\n🔄 Batch AI Review"));
+    console.log(chalk.gray("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"));
+    
+    try {
+      const { spawn } = require('child_process');
+      const path = require('path');
+      const batchScriptPath = path.join(__dirname, '..', 'batch-review.js');
+      
+      const args = [batchScriptPath];
+      if (options.dryRun) {
+        args.push('--dry-run');
+      }
+      if (options.frontend) {
+        args.push('--frontend');
+      }
+      if (options.batchSize) {
+        args.push('--batch-size', options.batchSize);
+      }
+      
+      const child = spawn('node', args, { stdio: 'inherit' });
+      child.on('close', (code) => {
+        if (code !== 0) {
+          console.error(chalk.red(`\n❌ Batch review exited with code ${code}`));
+        }
+      });
+    } catch (error) {
+      console.error(chalk.red(`❌ Failed to run batch review: ${error.message}`));
+    }
+  });
+
 // Also support direct usage without subcommand
 program
   .option("-b, --base <branch>", "Base branch to compare against")
